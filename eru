@@ -11,6 +11,9 @@ import os
 
 
 class Emacs:
+    # Flags that apply to all of the Emacs instances.
+    flags = []
+
     def __init__(
         self,
         command: list[str] | str = None,
@@ -37,13 +40,13 @@ class Emacs:
     def start(self):
         if self.command is not None:
             e = subprocess.Popen(
-                [*self.command, "-ib", "12"],
+                [*self.command, *self.flags],
                 env=self.env,
                 start_new_session=True,
             )
         else:
             e = subprocess.Popen(
-                ["emacs", "-ib", "12"], env=self.env, start_new_session=True
+                ["emacs", *self.flags], env=self.env, start_new_session=True
             )
         try:
             e.wait(timeout=self.timeout)
@@ -54,15 +57,18 @@ class Emacs:
 
 
 class Screen:
-    def __init__(self, launch_configs: list[dict[str, dict]] = None) -> None:
+    def __init__(
+        self, launch_configs: list[dict[str, dict]] = None, timeout: int = 1
+    ) -> None:
         self.launch_configs = launch_configs
+        self.timeout = timeout
         self.stdsrc: curses.window
 
     def initscr(self) -> None:
         "Initialize curses and an interface."
 
         if self.launch_configs is None:
-            Emacs(timeout=1).start()
+            Emacs(timeout=self.timeout).start()
             return
 
         self.stdsrc = curses.initscr()
@@ -109,9 +115,13 @@ class Screen:
     def start(self, choice: dict = None) -> None:
         "Start with a chosen launch configuration."
         if choice is not None:
-            e = Emacs(choice.get("command"), choice.get("env"), 1)
+            e = Emacs(
+                command=choice.get("command"),
+                env=choice.get("env"),
+                timeout=self.timeout,
+            )
         else:
-            e = Emacs(timeout=1)
+            e = Emacs(timeout=self.timeout)
         e.start()
         curses.endwin()
 
@@ -119,6 +129,7 @@ class Screen:
 def main():
     with open(f"{os.getenv('XDG_CONFIG_HOME')}/eru/config.toml", "rb") as file:
         config = tomllib.load(file)
+    Emacs.flags = config.get("general").get("flags")
     s = Screen(config.get("launch_configs"))
     s.initscr()
 

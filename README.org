@@ -13,14 +13,26 @@ With ~eru~ it just becomes pressing a corresponding key in a terminal window.
 To configure ~eru~, you just place a ~config.toml~ in ~$XDG_CONFIG_HOME/eru/~ directory. The example of a configuration is found below.
 
 #+begin_src toml
+  [general]
+
+  flags = ["-ib", "12"]
+
   [[launch_configs]]
+
   command = "some command"
   alias = "some alias"
   key = "a"
 
   [launch_configs.env]
+
   SOME_ENVVAR = "some_env_var"
 #+end_src
+
+** ~general~ section
+
+- ~flags~ is a list of flags that are applied to all of the Emacs instances run from ~eru~.
+
+** ~launch_configs~ section
 
 - ~command~ is a command that is run.
 - ~alias~ is a displayed name of your configuration.
