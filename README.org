@@ -1,0 +1,37 @@
+* Introduction
+
+~eru~ is a simple python script that does exactly one thing - runs Emacs. You can configure it to run emacs in different environments. For example, you can run it from a guix shell. The whole point is that it is just faster to use eru than to run shell command like below and than close the terminal, if you don't need it.
+
+#+begin_src bash
+  guix shell -m manifest -- emacs
+#+end_src
+
+With ~eru~ it just becomes pressing a corresponding key in a terminal window.
+
+* Configuration
+
+To configure ~eru~, you just place a ~config.toml~ in ~$XDG_CONFIG_HOME/eru/~ directory. The example of a configuration is found below.
+
+#+begin_src toml
+  [[launch_configs]]
+  command = "some command"
+  alias = "some alias"
+  key = "a"
+
+  [launch_configs.env]
+  SOME_ENVVAR = "some_env_var"
+#+end_src
+
+- ~command~ is a command that is run.
+- ~alias~ is a displayed name of your configuration.
+- ~key~ is a key you press to choose your launch configuration and it is the only required field. Other are optional.
+- ~env~ is a table of environmental variables.
+
+* Usage
+
+~eru~ is designed to be used with a tiling window manager like ~sway~. To get the most of it, one should place a line like below in their config. After reloading, everything should work just fine.
+
+#+begin_src
+  bindsym $mod+Shift+Return exec alacritty --command eru
+#+end_src
+
