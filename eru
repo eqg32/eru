@@ -1,6 +1,6 @@
 #!/bin/python
 
-# Emacs RUnner is a simple program that does exactly one thing - it
+# Emacs RUnner is a simple script that does exactly one thing - it
 # runs Emacs.
 
 import subprocess
